@@ -1,9 +1,11 @@
 //Configuration
 
 var nodes = {};
-var canvas = document.getElementById('canvas');
-var ctx = canvas.getContext('2d');
-var ballRadius = 7;
+var problem = document.getElementById('problem');
+var solution = document.getElementById('solution');
+var problemCtx = problem.getContext('2d');
+var solutionCtx = solution.getContext('2d');
+var ballRadius = 2;
 var ballDiameter = ballRadius * 2;
 
 //Random
@@ -12,10 +14,10 @@ function randomRange(min, max) {
   return Math.floor((Math.random() * (max-min+1))+min);
 }
 function randomNodeX() {
-  return Math.floor(Math.random() * (canvas.width - ballDiameter) + ballRadius);
+  return Math.floor(Math.random() * (problem.width - ballDiameter) + ballRadius);
 }
 function randomNodeY() {
-  return Math.floor(Math.random() * (canvas.height - ballDiameter) + ballRadius);
+  return Math.floor(Math.random() * (problem.height - ballDiameter) + ballRadius);
 }
 
 //Utils
@@ -28,6 +30,11 @@ function countConnections(nodeIndex) {
 }
 function connected(a, b) {
   return
+}
+function clear() {
+
+    solutionCtx.clearRect(0, 0, problem.width, problem.height);
+    problemCtx.clearRect(0, 0, problem.width, problem.height);
 }
 
 //Generators
@@ -91,8 +98,6 @@ function generatePartialConnections(nodes) {
       numEdges -=1;
     }
   }
-
-  console.log("arestas restantes: ", numEdges);
 }
 function generateCompleteGraph(numNodes){
   generateNodeList(numNodes);
@@ -105,34 +110,36 @@ function generatePartialGraph(numNodes){
 
 //Drawings
 
-function drawNodes(nodes) {
-  for (p in nodes) {
-    ctx.beginPath();
-    ctx.fillStyle = "rgba(30, 31, 36, 1)";
-    ctx.arc(nodes[p].x, nodes[p].y, ballRadius, 0, Math.PI * 2, true);
-    ctx.fill();
+function drawNodes(nodes, context) {
 
-    ctx.fillStyle = "white";
-    ctx.textAlign="center";
-    ctx.fillText(p, nodes[p].x, nodes[p].y + 3);
+  for (p in nodes) {
+    context.beginPath();
+    context.fillStyle = "rgba(30, 31, 36, 1)";
+    context.arc(nodes[p].x, nodes[p].y, ballRadius, 0, Math.PI * 2, true);
+    context.fill();
+    //
+    // context.font = "20px sans-serif";
+    // context.fillStyle = "white";
+    // context.textAlign="center";
+    // context.fillText(p, nodes[p].x, nodes[p].y + 7);
   }
 }
-function drawGraph(nodes) {
+function drawGraph(nodes, context) {
 
   for (var p in nodes) {
 
     for (var i = 0; i < nodes[p].connections.length; i++) {
       if(nodes[p].connections[i] >= p) {
-        ctx.beginPath();
-        ctx.moveTo(nodes[p].x, nodes[p].y);
-        ctx.strokeStyle = "rgba(30, 31, 36, 0.3)";
-        ctx.lineTo(nodes[nodes[p].connections[i]].x, nodes[nodes[p].connections[i]].y);
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        context.beginPath();
+        context.moveTo(nodes[p].x, nodes[p].y);
+        context.strokeStyle = "rgba(30, 31, 36, 0.3)";
+        context.lineTo(nodes[nodes[p].connections[i]].x, nodes[nodes[p].connections[i]].y);
+        context.lineWidth = 4;
+        context.stroke();
       }
     }
 
   }
 
-  drawNodes(nodes);
+  drawNodes(nodes, context);
 }

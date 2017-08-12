@@ -3,15 +3,27 @@
   <head>
     <meta charset="utf-8">
     <title>Travelling Salesman</title>
-    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="css/app.css">
   </head>
   <body>
     <main>
-      <div id="container">
-        <canvas id="canvas"></canvas>
+      <div class="menu">
+        <span>Nodes</span>
+        <input type="text" name="nodesNumber">
+        <span>Complete Graph</span>
+        <select name="typeGraph">
+          <option value="complete">Complete Graph</option>
+          <option value="partial">Partial Graph</option>
+        </select>
+        <button type="button" name="button" onclick="main()">Generate</button>
+      </div>
+      <div class="container">
+        <canvas id="problem"></canvas>
+        <canvas id="solution"></canvas>
       </div>
     </main>
-    <script src="utils.js" charset="utf-8"></script>
-    <script src="app.js" charset="utf-8"></script>
+
+    <script src="js/utils.js" charset="utf-8"></script>
+    <script src="js/app.js" charset="utf-8"></script>
   </body>
 </html>
