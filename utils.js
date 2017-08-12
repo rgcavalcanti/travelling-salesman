@@ -3,41 +3,34 @@
 var nodes = {};
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-var minConections = 1;
-var maxConections = 1;
-var ballRadius = 10;
+var ballRadius = 7;
 var ballDiameter = ballRadius * 2;
 
-//Methods
+//Random
 
 function randomRange(min, max) {
   return Math.floor((Math.random() * (max-min+1))+min);
 }
-
 function randomNodeX() {
   return Math.floor(Math.random() * (canvas.width - ballDiameter) + ballRadius);
 }
-
 function randomNodeY() {
   return Math.floor(Math.random() * (canvas.height - ballDiameter) + ballRadius);
 }
 
-function avaibleConnections(nodeIndex){
-  return nodes[nodeIndex].limitConnections - nodes[nodeIndex].connections.length;
+//Utils
+
+function maxEdges(numNodes) {
+  return (numNodes * (numNodes - 1))/2;
+}
+function countConnections(nodeIndex) {
+  return nodes[nodeIndex].connections.length;
+}
+function connected(a, b) {
+  return
 }
 
-function canConnect(item, connection) {
-  if (
-    nodes[item].connections.includes(connection) ||
-    connection == item ||
-    avaibleConnections(connection) == 0
-  ) {
-    return false;
-  }
-  else {
-    return true;
-  }
-}
+//Generators
 
 function generateNodeList(numNodes) {
 
@@ -46,12 +39,10 @@ function generateNodeList(numNodes) {
   for (var i = 0; i < numNodes; i++) {
     nodes[i] = {x: randomNodeX(), y: randomNodeY()};
     nodes[i].connections = [];
-    nodes[i].limitConnections = randomRange(minConections, maxConections);
   }
 
   return nodes;
 }
-
 function generateCompleteConnections(nodes) {
 
   for (p in nodes) {
@@ -63,40 +54,56 @@ function generateCompleteConnections(nodes) {
     }
   }
 }
-
 function generatePartialConnections(nodes) {
 
+  let numNodes = Object.keys(nodes).length;
+  let numEdges = randomRange(numNodes, maxEdges(numNodes));
   let connection;
-  let remainConnections;
 
-  for (var i = 0; i < 1; i++) {
-    for (var item in nodes) {
+  for (var item in nodes) {
 
-      remainConnections = avaibleConnections(item);
-      connection = randomRange(0, Object.keys(nodes).length - 1);
+    if(item == numNodes - 1){
+      connection = 0;
+    }
+    else {
+      connection = parseInt(item) + 1;
+    }
 
-      if(remainConnections > 0) {
+    numEdges -= 1;
+    nodes[item].connections.push(connection);
+    nodes[connection].connections.push(parseInt(item));
+  }
 
-        while(canConnect(item, connection) == false) {
-          connection = randomRange(0, Object.keys(nodes).length - 1);
-        }
 
-        nodes[item].connections.push(connection);
-        nodes[connection].connections.push(parseInt(item));
-      }
+  let node1 = randomRange(0, numNodes - 1);
+  let node2 = randomRange(0, numNodes - 1);
+
+  while(numEdges >= 1) {
+    if (node1 == node2 || nodes[node1].connections.includes(node2)) {
+
+      node1 = randomRange(0, numNodes - 1);
+      node2 = randomRange(0, numNodes - 1);
+    }
+    else {
+      nodes[node1].connections.push(node2);
+      nodes[node2].connections.push(node1);
+
+      numEdges -=1;
     }
   }
-}
 
+  console.log("arestas restantes: ", numEdges);
+}
 function generateCompleteGraph(numNodes){
   generateNodeList(numNodes);
   generateCompleteConnections(nodes);
 }
-
 function generatePartialGraph(numNodes){
   generateNodeList(numNodes);
   generatePartialConnections(nodes);
 }
+
+//Drawings
 
 function drawNodes(nodes) {
   for (p in nodes) {
@@ -110,18 +117,19 @@ function drawNodes(nodes) {
     ctx.fillText(p, nodes[p].x, nodes[p].y + 3);
   }
 }
-
 function drawGraph(nodes) {
 
   for (var p in nodes) {
 
     for (var i = 0; i < nodes[p].connections.length; i++) {
-      ctx.beginPath();
-      ctx.moveTo(nodes[p].x, nodes[p].y);
-      ctx.strokeStyle = "rgba(30, 31, 36, 0.3)";
-      ctx.lineTo(nodes[nodes[p].connections[i]].x, nodes[nodes[p].connections[i]].y);
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      if(nodes[p].connections[i] >= p) {
+        ctx.beginPath();
+        ctx.moveTo(nodes[p].x, nodes[p].y);
+        ctx.strokeStyle = "rgba(30, 31, 36, 0.3)";
+        ctx.lineTo(nodes[nodes[p].connections[i]].x, nodes[nodes[p].connections[i]].y);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
     }
 
   }
