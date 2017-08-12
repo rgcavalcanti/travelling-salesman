@@ -1,9 +1,9 @@
+
 function main() {
 
-  minConections = 10;
-  maxConections = 10;
-
-  generatePointList(4);
+  // generateCompleteGraph(6);
+  generatePartialGraph(4);
   drawGraph(points);
+  console.log(points)
 }
 main();
