@@ -1,11 +1,11 @@
 //Configuration
 
-var points = {};
+var nodes = {};
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-var minConections = 2;
-var maxConections = 2;
-var ballRadius = 5;
+var minConections = 1;
+var maxConections = 1;
+var ballRadius = 10;
 var ballDiameter = ballRadius * 2;
 
 //Methods
@@ -14,85 +14,117 @@ function randomRange(min, max) {
   return Math.floor((Math.random() * (max-min+1))+min);
 }
 
-function randomPointX() {
+function randomNodeX() {
   return Math.floor(Math.random() * (canvas.width - ballDiameter) + ballRadius);
 }
 
-function randomPointY() {
+function randomNodeY() {
   return Math.floor(Math.random() * (canvas.height - ballDiameter) + ballRadius);
 }
 
-function generatePointList(numPoints) {
+function avaibleConnections(nodeIndex){
+  return nodes[nodeIndex].limitConnections - nodes[nodeIndex].connections.length;
+}
+
+function canConnect(item, connection) {
+  if (
+    nodes[item].connections.includes(connection) ||
+    connection == item ||
+    avaibleConnections(connection) == 0
+  ) {
+    return false;
+  }
+  else {
+    return true;
+  }
+}
+
+function generateNodeList(numNodes) {
 
   let connections = [];
 
-  for (var i = 0; i < numPoints; i++) {
-    points[i] = {x: randomPointX(), y: randomPointY()};
-    points[i].connections = [];
-    points[i].limitConnections = randomRange(minConections, maxConections);
+  for (var i = 0; i < numNodes; i++) {
+    nodes[i] = {x: randomNodeX(), y: randomNodeY()};
+    nodes[i].connections = [];
+    nodes[i].limitConnections = randomRange(minConections, maxConections);
   }
 
-  return points;
+  return nodes;
 }
 
-function generateCompleteConnections(points) {
+function generateCompleteConnections(nodes) {
 
-  for (p in points) {
+  for (p in nodes) {
 
-    for (var i = 0; i < Object.keys(points).length; i++) {
+    for (var i = 0; i < Object.keys(nodes).length; i++) {
       if (i != p) {
-        points[p].connections.push(i);
+        nodes[p].connections.push(i);
       }
     }
   }
 }
 
-function generatePartialConnections(points) {
-  for (var p in points) {
+function generatePartialConnections(nodes) {
 
-    let connection = randomRange(0, Object.keys(points).length - 1);
+  let connection;
+  let remainConnections;
 
-    for (var i = 0; i < points[p].limitConnections; i++) {
+  for (var i = 0; i < 1; i++) {
+    for (var item in nodes) {
 
-      while(points[p].connections.includes(connection) && points[connection].limitConnections <= points[connection].connections.length) {
-        connection = randomRange(0, Object.keys(points).length - 1);
+      remainConnections = avaibleConnections(item);
+      connection = randomRange(0, Object.keys(nodes).length - 1);
+
+      if(remainConnections > 0) {
+
+        while(canConnect(item, connection) == false) {
+          connection = randomRange(0, Object.keys(nodes).length - 1);
+        }
+
+        nodes[item].connections.push(connection);
+        nodes[connection].connections.push(parseInt(item));
       }
-
-      points[p].connections.push(connection);
-      points[connection].connections.push(parseInt(p));
     }
   }
 }
 
-function generateCompleteGraph(numPoints){
-  generatePointList(numPoints);
-  generateCompleteConnections(points);
+function generateCompleteGraph(numNodes){
+  generateNodeList(numNodes);
+  generateCompleteConnections(nodes);
 }
 
-function generatePartialGraph(numPoints){
-  generatePointList(numPoints);
-  generatePartialConnections(points);
+function generatePartialGraph(numNodes){
+  generateNodeList(numNodes);
+  generatePartialConnections(nodes);
 }
 
-function drawPoints(points) {
-  for (p in points) {
+function drawNodes(nodes) {
+  for (p in nodes) {
     ctx.beginPath();
-    ctx.arc(points[p].x, points[p].y, ballRadius, 0, Math.PI * 2, true);
+    ctx.fillStyle = "rgba(30, 31, 36, 1)";
+    ctx.arc(nodes[p].x, nodes[p].y, ballRadius, 0, Math.PI * 2, true);
     ctx.fill();
+
+    ctx.fillStyle = "white";
+    ctx.textAlign="center";
+    ctx.fillText(p, nodes[p].x, nodes[p].y + 3);
   }
 }
 
-function drawGraph(points) {
-  drawPoints(points);
+function drawGraph(nodes) {
 
-  for (var p in points) {
+  for (var p in nodes) {
 
-    for (var i = 0; i < points[p].connections.length; i++) {
+    for (var i = 0; i < nodes[p].connections.length; i++) {
       ctx.beginPath();
-      ctx.moveTo(points[p].x, points[p].y);
-      ctx.lineTo(points[i].x, points[i].y);
+      ctx.moveTo(nodes[p].x, nodes[p].y);
+      ctx.strokeStyle = "rgba(30, 31, 36, 0.3)";
+      ctx.lineTo(nodes[nodes[p].connections[i]].x, nodes[nodes[p].connections[i]].y);
+      ctx.lineWidth = 2;
       ctx.stroke();
     }
 
   }
+
+  drawNodes(nodes);
 }

@@ -1,9 +1,12 @@
 
 function main() {
 
-  // generateCompleteGraph(6);
-  generatePartialGraph(4);
-  drawGraph(points);
-  console.log(points)
+  ctx.canvas.width = document.getElementById("container").offsetWidth;
+  ctx.canvas.height = document.getElementById("container").offsetHeight;
+
+  generateCompleteGraph(30);
+  // generatePartialGraph(4);
+  drawGraph(nodes);
+  console.log(nodes)
 }
 main();
