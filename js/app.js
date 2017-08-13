@@ -1,24 +1,17 @@
-(function(){
-  problemCtx.canvas.width = document.getElementsByClassName("container").item(0).offsetWidth/2;
-  problemCtx.canvas.height = document.getElementsByClassName("container").item(0).offsetHeight;
-
-  solutionCtx.canvas.width = document.getElementsByClassName("container").item(0).offsetWidth/2;
-  solutionCtx.canvas.height = document.getElementsByClassName("container").item(0).offsetHeight;
-
-})();
-
-function makeSolution () {
-  drawNodes(nodes, solutionCtx);
-}
-
-
+//Core functions
 function main() {
 
-  nodes = {};
+  if (intervalID) {
+    clearInterval(intervalID)
+    intervalID = null;
+  }
+
+  debugger;
   let numNodes = document.getElementsByName("nodesNumber").item(0).value || 4;
   let typeGraph = document.getElementsByName("typeGraph").item(0).value;
 
-  clear();
+  clear(problemCtx);
+  clear(solutionCtx);
 
   switch (typeGraph) {
     case "complete":
@@ -33,7 +26,15 @@ function main() {
   }
 
   drawGraph(nodes, problemCtx);
-
-  makeSolution();
 }
-main();
+
+function solve(algorithm) {
+
+  initSolutionArray(nodes);
+
+  switch (algorithm) {
+    case "bruteForce":
+      bruteForce(nodesArray);
+      break;
+  }
+}
