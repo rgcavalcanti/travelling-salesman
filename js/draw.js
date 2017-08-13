@@ -2,10 +2,10 @@
 
 function drawNodes(nodes, context) {
 
-  for (p in nodes) {
+  for (node in nodes) {
     context.beginPath();
     context.fillStyle = "rgba(30, 31, 36, 1)";
-    context.arc(nodes[p].x, nodes[p].y, ballRadius, 0, Math.PI * 2, true);
+    context.arc(nodes[node].x, nodes[node].y, ballRadius, 0, Math.PI * 2, true);
     context.fill();
     //TODO criar condição para mostrar texto dos pontos
     // context.font = "20px sans-serif";
@@ -17,19 +17,18 @@ function drawNodes(nodes, context) {
 
 function drawGraph(nodes, context) {
 
-  for (var p in nodes) {
+  for (var node in nodes) {
 
-    for (var i = 0; i < nodes[p].connections.length; i++) {
-      if(nodes[p].connections[i] >= p) {
+    for (var i = 0; i < nodes[node].connections.length; i++) {
+      if(nodes[node].connections[i] >= node) {
         context.beginPath();
-        context.moveTo(nodes[p].x, nodes[p].y);
+        context.moveTo(nodes[node].x, nodes[node].y);
         context.strokeStyle = "rgba(30, 31, 36, 0.3)";
-        context.lineTo(nodes[nodes[p].connections[i]].x, nodes[nodes[p].connections[i]].y);
+        context.lineTo(nodes[nodes[node].connections[i]].x, nodes[nodes[node].connections[i]].y);
         context.lineWidth = 4;
         context.stroke();
       }
     }
-
   }
 
   drawNodes(nodes, context);
@@ -45,7 +44,22 @@ function drawRecordNodes(array, context){
 
 }
 
-function drawRecordPath(array, context) {
+function drawCompletePercentual(step ,total, context) {
+  let percent = step/total;
+  if(percent < 1){
+    context.font = "20px sans-serif";
+    context.textAlign="end";
+    context.fillText("Actual Record: " + record.toFixed(2),context.canvas.width - 30, context.canvas.height - 60);
+    context.fillText((percent * 100).toFixed(2) + "%",context.canvas.width - 30, context.canvas.height - 30);
+  }
+  else{
+    context.font = "20px sans-serif";
+    context.textAlign="end";
+    context.fillText("Done! Best distance: " + record.toFixed(2),context.canvas.width - 30, context.canvas.height - 30);
+  }
+}
+
+function drawRecordArray(array, context) {
   for (var i = 1; i < array.length; i++) {
     context.beginPath();
     context.moveTo(nodes[array[i-1]].x, nodes[array[i-1]].y);
@@ -56,4 +70,8 @@ function drawRecordPath(array, context) {
   }
 
   drawRecordNodes(array, context);
+}
+
+function drawRecordObject(nodes, context){
+
 }

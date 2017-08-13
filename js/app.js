@@ -6,12 +6,12 @@ function main() {
     intervalID = null;
   }
 
-  debugger;
   let numNodes = document.getElementsByName("nodesNumber").item(0).value || 4;
   let typeGraph = document.getElementsByName("typeGraph").item(0).value;
 
   clear(problemCtx);
   clear(solutionCtx);
+  numPermutations = calcTotalPermutations(numNodes);
 
   switch (typeGraph) {
     case "complete":
@@ -31,6 +31,7 @@ function main() {
 function solve(algorithm) {
 
   initSolutionArray(nodes);
+
 
   switch (algorithm) {
     case "bruteForce":

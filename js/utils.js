@@ -31,6 +31,16 @@ function calcDistance(a,b){
   return Math.sqrt(sideX * sideX + sideY * sideY);
 }
 
+function calcTotalPermutations(numNodes) {
+
+  if (numNodes <= 1) {
+    return 1;
+  }
+  else {
+    return numNodes * calcTotalPermutations(numNodes - 1);
+  }
+}
+
 function nextPermutation(array) {
 	// Find non-increasing suffix
 	var i = array.length - 1;
