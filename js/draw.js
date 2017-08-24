@@ -7,11 +7,10 @@ function drawNodes(nodes, context) {
     context.fillStyle = "rgba(30, 31, 36, 1)";
     context.arc(nodes[node].x, nodes[node].y, ballRadius, 0, Math.PI * 2, true);
     context.fill();
-    //TODO criar condição para mostrar texto dos pontos
-    // context.font = "20px sans-serif";
-    // context.fillStyle = "white";
-    // context.textAlign="center";
-    // context.fillText(p, nodes[p].x, nodes[p].y + 7);
+    context.font = "9px sans-serif";
+    context.fillStyle = "white";
+    context.textAlign="center";
+    context.fillText(node, nodes[node].x, nodes[node].y);
   }
 }
 

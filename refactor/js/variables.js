@@ -1,0 +1,13 @@
+let nodes = [],
+    journey = [],
+    record = 0,
+    distance = 0,
+    step = 0,
+    numNodes = document.querySelector('input').value || 4,
+    ballRadius = 7,
+    ballDiameter = ballRadius * 2,
+    lineWidth = 3,
+    enableIndex = true;
+    problemCtx = document.getElementById('problem').getContext('2d'),
+    solutionCtx = document.getElementById('bruteForce').getContext('2d'),
+    otherCtx = document.getElementById('other').getContext('2d');
